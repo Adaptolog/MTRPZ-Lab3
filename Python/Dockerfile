@@ -1,18 +1,12 @@
-# Етап збірки
-FROM python:3.10-slim-bullseye AS builder
+FROM python:3.10-alpine AS builder
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    python3-dev \
-    && rm -rf /var/lib/apt/lists/*
-
+RUN apk add --no-cache gcc musl-dev python3-dev
 RUN python -m venv /venv
 COPY requirements.txt .
 RUN /venv/bin/pip install --no-cache-dir -r requirements.txt
 
-# Фінальний образ
-FROM python:3.10-slim-bullseye
+FROM python:3.10-alpine
 WORKDIR /app
 LABEL author="Петро Щур"
 
