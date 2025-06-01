@@ -1,19 +1,26 @@
-FROM python:3.10-slim-bullseye AS builder
+FROM python:3.10-alpine AS builder
 WORKDIR /app
 
-# Встановлюємо системні залежності для збірки numpy
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Встановлюємо всі необхідні залежності для збірки numpy
+RUN apk add --no-cache \
     gcc \
+    g++ \
+    musl-dev \
     python3-dev \
-    && rm -rf /var/lib/apt/lists/*
+    openblas-dev \
+    make \
+    libc-dev \
+    linux-headers
 
-# Встановлюємо віртуальне оточення та залежності
+# Створюємо віртуальне оточення
 RUN python -m venv /venv
+
+# Копіюємо та встановлюємо залежності
 COPY requirements.txt .
 RUN /venv/bin/pip install --no-cache-dir -r requirements.txt
 
 # Фінальний образ
-FROM python:3.10-slim-bullseye
+FROM python:3.10-alpine
 WORKDIR /app
 LABEL author="Петро Щур"
 
