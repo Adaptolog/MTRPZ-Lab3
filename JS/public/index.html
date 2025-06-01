@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Космічні факти</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="stars"></div>
+  <div class="container">
+    <h1>🌌 Випадковий факт про космос</h1>
+    <button id="getFact" class="glow-button">Отримати факт</button>
+    <div id="fact" class="fact-text"></div>
+  </div>
+  <script>
+    document.getElementById('getFact').addEventListener('click', async () => {
+      const response = await fetch('/api/fact');
+      const data = await response.json();
+      const factElement = document.getElementById('fact');
+      factElement.innerText = data.fact;
+      factElement.classList.add('animate');
+      setTimeout(() => factElement.classList.remove('animate'), 1000);
+    });
+  </script>
+</body>
+</html>
