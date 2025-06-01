@@ -1,15 +1,23 @@
-FROM python:3.10-alpine AS builder
+FROM python:3.10-slim-bullseye AS builder
 WORKDIR /app
 
-RUN apk add --no-cache gcc musl-dev python3-dev
+# Встановлюємо системні залежності для збірки numpy
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Встановлюємо віртуальне оточення та залежності
 RUN python -m venv /venv
 COPY requirements.txt .
 RUN /venv/bin/pip install --no-cache-dir -r requirements.txt
 
-FROM python:3.10-alpine
+# Фінальний образ
+FROM python:3.10-slim-bullseye
 WORKDIR /app
 LABEL author="Петро Щур"
 
+# Копіюємо віртуальне оточення та код
 COPY --from=builder /venv /venv
 COPY . .
 
